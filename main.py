@@ -114,19 +114,22 @@ def scan_ports(hst):
 
     # firebird 3050
     # mysql 3306
-    db_ports = [3050, 3306]
+    # db_ports = [3050, 3306]
+    # proxy_ports = [8080, 3128]
+
     web_ports = [80, 443]
-    proxy_ports = [8080, 3128]
     win_ports = [3389, 445, 135]
     linux_ports = [22]
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
         print("[+] Scanning " + hst)
         web_scan = executor.submit(test_open_port, hst, web_ports)
-        proxy_scan = executor.submit(test_open_port, hst, proxy_ports)
+
+        # proxy_scan = executor.submit(test_open_port, hst, proxy_ports)
+        # db_scan = executor.submit(test_open_port, hst, db_ports)
+
         win_scan = executor.submit(test_open_port, hst, win_ports)
         linux_scan = executor.submit(test_open_port, hst, linux_ports)
-        db_scan = executor.submit(test_open_port, hst, db_ports)
 
         web_result = web_scan.result()
 
@@ -134,11 +137,11 @@ def scan_ports(hst):
             total_ports["web"] = web_result
             result["up"] = "Live"
 
-        proxy_result = proxy_scan.result()
+        # proxy_result = proxy_scan.result()
 
-        if len(proxy_result) > 0x0:
-            total_ports["proxy"] = proxy_result
-            result["up"] = "Live"
+        # if len(proxy_result) > 0x0:
+        #     total_ports["proxy"] = proxy_result
+        #     result["up"] = "Live"
 
         win_result = win_scan.result()
 
@@ -152,11 +155,11 @@ def scan_ports(hst):
             total_ports["linux"] = linux_ports
             result["up"] = "Live"
 
-        db_result = db_scan.result()
+        # db_result = db_scan.result()
 
-        if len(db_result) > 0x0:
-            total_ports["linux"] = linux_ports
-            result["up"] = "Live"
+        # if len(db_result) > 0x0:
+        #     total_ports["linux"] = linux_ports
+        #     result["up"] = "Live"
 
         result["type"] = parse_scan(hst, total_ports)
 
@@ -198,6 +201,7 @@ def deploy():
                         continue
 
                     ip = str(ip)
+                    pass
                     one_host["dns"] = dns_resolver(ip)
                     one_host["ip"] = ip
                     results = scan_ports(ip)
