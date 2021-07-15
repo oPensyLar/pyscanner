@@ -48,19 +48,33 @@ def http_get(hst, ports):
 def parse_scan(host_name, ports):
     array_result = []
 
+    # enum los tipos web, linux, win
     for c_type in ports:
+
+        # listar los puertos que fueron detectados
         if ports[c_type] is not None:
+
+            # Crea un diccionario solo con los puertos detectados
             dict_result = {"type": c_type, "count_ports": len(ports[c_type])}
+
+            # Crea un array de los resultados
             array_result.append(dict_result)
 
+    # max de puertos detectados
     count_ports_max = 0x0
     real_type = None
+
+    # Enumera los diccionarios con los puertos detectados
     for c_result in array_result:
         if count_ports_max is 0x0:
             count_ports_max = c_result["count_ports"]
 
         else:
             if count_ports_max < c_result["count_ports"]:
+                count_ports_max = c_result["count_ports"]
+                real_type = c_result["type"]
+
+            if count_ports_max == c_result["count_ports"]:
                 count_ports_max = c_result["count_ports"]
                 real_type = c_result["type"]
 
@@ -75,6 +89,9 @@ def dns_resolver(ip_addr):
         answer = my_resolver.resolve_address(ip_addr)
 
     except dns.exception.Timeout:
+        return None
+
+    except dns.resolver.NoNameservers:
         return None
 
     except dns.resolver.NXDOMAIN:
